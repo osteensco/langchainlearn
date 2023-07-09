@@ -31,13 +31,14 @@ tools = [
         # pinecone index creation
         # wikipedia
         # pythonREPL
+        # read files
         # image generation
     Tool(
         name="Predict",
         func = llm.predict,
         description="""
         Useful when a search is unnecessary. 
-        If it is likely that the answer would not have changed since 2021 (it's currently 2023), then this tool should take priority over using the "Search" tool.
+        If it is likely that the answer would not have changed since 2021 (it's currently 2023), then this tool should take priority over using the "Search" tool. 
         """
     ),
     Tool(
@@ -53,8 +54,9 @@ tools = [
         name="Verify Search",
         func=search.run,
         description="""
-        Used to verify an answer determined after utilizing the "Search" tool. 
-        Take your Final Answer and phrase it as a question, based on the results determine if you are correct. If not try using the search tool again.
+        Used to verify an answer determined after utilizing the "Search" tool. Take your Final Answer and phrase it as a question, based on the results determine if you are correct. 
+        If not, try using the search tool again with this in mind. 
+        For example, if asked "who was the US president in 1991?" and you determine the answer is "George H.W. Bush", you should use this tool with the input "was George H.W. Bush the US President in 1991?"
         """,
     )
 ]
