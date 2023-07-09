@@ -97,6 +97,21 @@ agent_chain = AgentExecutor.from_agent_and_tools(
 # agent_chain.run(input="Who is Tennessee's head football coach for the 2023 season?")
 while True:
     userinput = input('user input: ')
+    userinput = userinput.removeprefix('user input: ')
     agent_chain.run(input=userinput)
+
+
+
+
+
+###### RLHF Mechanism ######
+
+    # create a short term memory store of last user input and AI output, call it LastInteraction
+    # each conversation should have a unique key, call it ConversationKey, and each LastInteraction should be given a integer value based on the order it occurs starting at 0, call it ConversationIndex
+    # use a Tool that can classify sentiment of user input call it JudgeLastInteraction
+    # based on JudgeLastInteraction the specific LastInteraction should be stored in a negative or positive index of a vector store
+        # this should contain context details of conversation unique ConversationKey and ConversationIndex
+    # memory retrieval tool would then be set up to query both positive and negative index for past conversations and apply positive or negative context of the respective Index results
+
 
 
