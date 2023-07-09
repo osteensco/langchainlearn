@@ -18,6 +18,14 @@ class CodeData(BaseModel):
 async def execute_code(code_data: CodeData):
     if code_data.code_type == "python":
         try:
+            # IMPROVE
+                # need subdirectory called adhoc
+                # for python scripts, API will take two parameters: requirements and code
+                # requirements will be saved to requirements.txt
+                # code will be saved to scratchpad.py
+                # after files are updated `python scratchpad.py will be run`
+                
+                # keep shell command logic below for shell commands
             buffer = StringIO()
             sys.stdout = buffer
             exec(code_data.code)
