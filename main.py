@@ -13,8 +13,29 @@ GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 GOOGLE_CSE_ID = os.environ.get('GOOGLE_CSE_ID')
 
 
+
+llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
 search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
+
+
 tools = [
+    #tools to add: 
+        # that reddit ML model that does webscraping intelligently
+        # wolfram alpha
+        # Apify, maybe replace search with something from here
+        # pinecone search
+        # pinecone index creation
+        # wikipedia
+        # pythonREPL
+        #
+    Tool(
+        name="Predict",
+        func = llm.predict,
+        description="""
+        Useful when a search is unnecessary. 
+        If it is likely that the answer would not have changed since 2021 (it's currently 2023), then this tool should take priority over using the "Search" tool.
+        """
+    ),
     Tool(
         name="Search",
         func=search.run,
@@ -48,9 +69,6 @@ prompt = ZeroShotAgent.create_prompt(
     input_variables=["input", "chat_history", "agent_scratchpad"],
 )
 memory = ConversationBufferMemory(memory_key="chat_history")
-
-
-llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
 
 
 llm_chain = LLMChain(llm=llm, prompt=prompt)
