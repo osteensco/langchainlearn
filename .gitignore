@@ -1,2 +1,4 @@
 /venv
 /token.env
+/__pycache__
+/sandbox/__pycache__

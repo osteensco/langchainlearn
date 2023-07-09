@@ -4,7 +4,7 @@ from langchain import OpenAI, LLMChain
 from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.memory import ConversationBufferMemory
-
+from tools import SandboxTool
 
 
 load_dotenv('token.env')
@@ -21,6 +21,8 @@ llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
 # https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
 
 search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
+
+
 
 tools = [
     #tools to add: 
@@ -58,7 +60,8 @@ tools = [
         If not, try using the search tool again with this in mind. 
         For example, if asked "who was the US president in 1991?" and you determine the answer is "George H.W. Bush", you should use this tool with the input "was George H.W. Bush the US President in 1991?"
         """,
-    )
+    ),
+    SandboxTool()
 ]
 
 
