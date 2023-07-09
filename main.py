@@ -14,9 +14,13 @@ GOOGLE_CSE_ID = os.environ.get('GOOGLE_CSE_ID')
 
 
 
-llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
-search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
 
+#build out the tools the AI will be able to use
+llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
+#check out alternatives on huggingface, not sure if using these require paid membership
+# https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
+
+search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
 
 tools = [
     #tools to add: 
@@ -27,7 +31,7 @@ tools = [
         # pinecone index creation
         # wikipedia
         # pythonREPL
-        #
+        # image generation
     Tool(
         name="Predict",
         func = llm.predict,
@@ -55,6 +59,10 @@ tools = [
     )
 ]
 
+
+
+#promt template
+######## How to addSystem Promt???
 prefix = """Have a conversation with a human, answering the following questions as best you can. You have access to the following tools:"""
 suffix = """Begin!"
 
@@ -68,9 +76,15 @@ prompt = ZeroShotAgent.create_prompt(
     suffix=suffix,
     input_variables=["input", "chat_history", "agent_scratchpad"],
 )
-memory = ConversationBufferMemory(memory_key="chat_history")
 
 
+
+#persistence 
+memory = ConversationBufferMemory(memory_key="chat_history")#short term
+### switch over to pinecone index
+
+
+#define the AI
 llm_chain = LLMChain(llm=llm, prompt=prompt)
 agent = ZeroShotAgent(llm_chain=llm_chain, tools=tools, verbose=True)
 agent_chain = AgentExecutor.from_agent_and_tools(
