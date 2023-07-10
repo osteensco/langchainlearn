@@ -2,3 +2,4 @@
 /token.env
 /__pycache__
 /sandbox/__pycache__
+/sandbox/api/__pycache__
