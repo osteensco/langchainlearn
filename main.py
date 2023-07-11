@@ -4,7 +4,7 @@ from langchain import OpenAI, LLMChain
 from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.memory import ConversationBufferMemory
-from tools import SandboxTool
+from tools import PythonInterpreter
 
 
 load_dotenv('token.env')
@@ -22,6 +22,8 @@ llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
 
 search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
 
+def reflect_on_tool_options():
+    llm.predict("AI: considering the previous human message, I don't have a tool that seems sufficient for the task given. I should explain my reasoning to the human.")
 
 
 tools = [
@@ -35,6 +37,14 @@ tools = [
         # pythonREPL
         # read files
         # image generation
+    Tool(
+        name="No Tool",
+        func = reflect_on_tool_options,
+        description="""
+        Useful when none of the other tools available appear to be a good choice. 
+        You should use this if you are asked to perform a task or answer a question and are unable to successfully complete the task or answer the question. 
+        """
+    ),
     Tool(
         name="Predict",
         func = llm.predict,
@@ -61,7 +71,7 @@ tools = [
         For example, if asked "who was the US president in 1991?" and you determine the answer is "George H.W. Bush", you should use this tool with the input "was George H.W. Bush the US President in 1991?"
         """,
     ),
-    SandboxTool()
+    PythonInterpreter(),
 ]
 
 
@@ -79,7 +89,7 @@ prompt = ZeroShotAgent.create_prompt(
     tools,
     prefix=prefix,
     suffix=suffix,
-    input_variables=["input", "chat_history", "agent_scratchpad"],
+    input_variables=["chat_history", "input", "agent_scratchpad"],
 )
 
 
