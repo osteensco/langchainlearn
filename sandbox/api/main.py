@@ -43,23 +43,14 @@ async def execute_code(code_data: CodeData):
         with open('adhoc/scratchpad.py', 'w') as code:
             code.write(code_data.code)
         
-        # IMPROVE
-            # need subdirectory called adhoc
-            # for python scripts, API will take two parameters: requirements and code
-            # requirements will be saved to requirements.txt
-            # code will be saved to scratchpad.py
-            # after files are updated `python scratchpad.py will be run`
-            
-            # keep shell command logic below for shell commands
-        
         outputs = {}
-        req_exec_result = subprocess.run(['pip', 'install', '-r', 'adhoc/requirements.txt'], capture_output=True).stdout.decode()
+        req_exec_result = subprocess.run(['pip', 'install', '-r', 'adhoc/requirements.txt'], capture_output=True)
         outputs['requirements.txt'] = display_output(req_exec_result)
         
-        python_exec_output = subprocess.run(['python', 'adhoc/scratchpad.py'], check=False, capture_output=True)
+        python_exec_output = subprocess.run(['python', '-u', 'adhoc/scratchpad.py'], check=False, capture_output=True)
         outputs['scratchpad.py'] = display_output(python_exec_output)
  
-
+        print(outputs)
         return {"output": outputs} if outputs else {"message": "OK"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

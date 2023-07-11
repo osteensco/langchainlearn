@@ -20,10 +20,10 @@ llm = OpenAI(temperature=0, openai_api_key=LLM_API_KEY)
 #check out alternatives on huggingface, not sure if using these require paid membership
 # https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
 
-search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=10)
+search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID, k=5)
 
 def reflect_on_tool_options():
-    llm.predict("AI: considering the previous human message, I don't have a tool that seems sufficient for the task given. I should explain my reasoning to the human.")
+    llm.predict("AI: considering the previous prompt, I don't have a tool that seems sufficient for the task given. I should explain my reasoning to the human.")
 
 
 tools = [
@@ -42,15 +42,17 @@ tools = [
         func = reflect_on_tool_options,
         description="""
         Useful when none of the other tools available appear to be a good choice. 
-        You should use this if you are asked to perform a task or answer a question and are unable to successfully complete the task or answer the question. 
+        You should use this if you are asked to perform a task or answer a question and are unable to successfully complete the task or answer the question with the current tools at your disposal.
+        This tool will provide an additional prompt to you asking you to explain why you don't believe you have a tool to complete the task or question asked of you.
         """
     ),
     Tool(
         name="Predict",
         func = llm.predict,
         description="""
-        Useful when a search is unnecessary. 
-        If it is likely that the answer would not have changed since 2021 (it's currently 2023), then this tool should take priority over using the "Search" tool. 
+        Useful when none of the other tools seem necessary. 
+        If the prompt seems to be more conversational, this may be a good tool to use. 
+        If your response requires more facts, logic, math, or other things then prioritize other tools ahead of this one. 
         """
     ),
     Tool(
@@ -78,11 +80,12 @@ tools = [
 
 #promt template
 ######## How to addSystem Promt???
-prefix = """Have a conversation with a human, answering the following questions as best you can. You have access to the following tools:"""
+prefix = """You are a personal assistant, designed to be as helpful as possible to the user. Be sure to assist in any prompts as best you can. 
+You have access to tools you can use in some combination or standalone in order to provide the best assitance possible. These tools include:"""
 suffix = """Begin!"
 
 {chat_history}
-Question: {input}
+prompt: {input}
 {agent_scratchpad}"""
 
 prompt = ZeroShotAgent.create_prompt(
@@ -109,10 +112,17 @@ agent_chain = AgentExecutor.from_agent_and_tools(
 
 # agent_chain.run(input="Who is Tennessee's head football coach for the 2023 season?")
 while True:
+    
     userinput = input('user input: ')
     userinput = userinput.removeprefix('user input: ')
-    agent_chain.run(input=userinput)
-
+    
+    try:
+        response = agent_chain.run(input=userinput)
+    except ValueError as e:
+        response = str(e)
+        if not response.startswith("Could not parse LLM output: `"):
+            raise e
+        response = response.removeprefix("Could not parse LLM output: `").removesuffix("`")
 
 
 
