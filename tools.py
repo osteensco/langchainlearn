@@ -10,7 +10,7 @@ class PythonInterpreter(BaseTool):
     This tool sends an API post request to a docker container that has an environment set up to run the code you give it via post request.
     The endpoint will receive the data you provide it and will create a requirements.txt file and a scratchpad.py file. 
     It will then run the command pip install -r requirements.txt and afterwards execute the scratchpad.py script. Any output this script produces in the terminal will be returned to you in the response.
-    If successful, the response will be structure like {'output': {'requirements.txt': 'Requirement already satisfied: requests...', 'scratchpad.py': 'hello world'}}.
+    If successful, the response will be structure like {{'output': {{'requirements.txt': 'Requirement already satisfied: requests...', 'scratchpad.py': 'hello world'}}}}.
     The input to this tool should be a list of two strings, the first value is req(type:String), the second value is code(type:String). Both are needed to execute the tool properly. 
     These strings will be used to create a requirements.txt and scratchpad.py file respectively. 
     The strings should include any line breaks so that code and requirements.txt would be properly formatted and ready for execution.

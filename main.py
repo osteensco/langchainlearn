@@ -5,6 +5,15 @@ from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.memory import ConversationBufferMemory
 from tools import PythonInterpreter
+import docker
+import subprocess
+import datetime
+
+
+
+
+client = docker.from_env()
+subprocess.run(['docker-compose', 'up', '-d'])
 
 
 load_dotenv('token.env')
@@ -34,7 +43,6 @@ tools = [
         # pinecone search
         # pinecone index creation
         # wikipedia
-        # pythonREPL
         # read files
         # image generation
     Tool(
@@ -80,7 +88,7 @@ tools = [
 
 #promt template
 ######## How to addSystem Promt???
-prefix = """You are a personal assistant, designed to be as helpful as possible to the user. Be sure to assist in any prompts as best you can. 
+prefix = f"""It is currently {datetime.datetime.now()}. You are a personal assistant, designed to be as helpful as possible to the user. Be sure to assist in any prompts as best you can. 
 You have access to tools you can use in some combination or standalone in order to provide the best assitance possible. These tools include:"""
 suffix = """Begin!"
 
@@ -110,7 +118,7 @@ agent_chain = AgentExecutor.from_agent_and_tools(
 )
 
 
-# agent_chain.run(input="Who is Tennessee's head football coach for the 2023 season?")
+
 while True:
     
     userinput = input('user input: ')

@@ -1,9 +1,4 @@
-import requests
-from bs4 import BeautifulSoup
+def hello_world():
+    print('hello world')
 
-r = requests.get('https://www.scottosteen.com/')
-
-soup = BeautifulSoup(r.content.decode('utf-8'), 'html.parser')
-
-first_sentence = soup.find('p').get_text(strip=True)
-print(first_sentence)
+hello_world()
