@@ -8,6 +8,11 @@ from tools import PythonInterpreter
 import docker
 import subprocess
 import datetime
+import atexit
+
+
+
+
 
 
 
@@ -15,6 +20,10 @@ import datetime
 client = docker.from_env()
 subprocess.run(['docker-compose', 'up', '-d'])
 
+def stop_docker():
+    subprocess.run(["docker-compose", "down"])
+
+atexit.register(stop_docker)
 
 load_dotenv('token.env')
 LLM_API_KEY = os.environ.get('LLM_API_KEY')
@@ -120,7 +129,7 @@ agent_chain = AgentExecutor.from_agent_and_tools(
 
 
 while True:
-    
+
     userinput = input('user input: ')
     userinput = userinput.removeprefix('user input: ')
     
